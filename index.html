@@ -1,0 +1,20 @@
+<h1 id="error_message" style="color: red;"></h1>
+
+<h2>Register</h2>
+<form action="/register" method="post">
+    <input placeholder="username" name="username" type="text">
+    <button>Submit</button>
+</form>
+
+<h2>Login</h2>
+<form action="/login" method="post">
+    <input placeholder="username" name="username" type="text">
+    <button>Submit</button>
+</form>
+
+<script>
+    let error = new URLSearchParams(window.location.search).get('error')
+    if (error) {
+        document.getElementById('error_message').textContent = error
+    }
+</script>

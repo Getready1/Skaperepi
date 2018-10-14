@@ -1,0 +1,17 @@
+<ul id="user-list">
+
+</ul>
+
+<script>
+    const userList = document.getElementById('user-list')
+    const authorized = new URLSearchParams(window.location.search).get('authorized')
+
+    var authUsers = authorized.split(',').forEach(username => {
+        var a = document.createElement("a")
+        a.href = "/chat?username=" + username
+        a.innerText = username
+        var li = document.createElement('li')
+        li.appendChild(a)
+        userList.appendChild(li)
+    })
+</script>
