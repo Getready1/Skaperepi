@@ -1,11 +1,64 @@
 <h3>Messages</h3>
-<ul></ul>
+<ul id="messages">
+</ul>
 <form>
-    <textarea placeholder="your message" name="" id="" cols="30" rows="10"></textarea>
-    <button>Submit</button>
+    <textarea placeholder="your message" name="" id="message-text" cols="30" rows="10"></textarea>
+    <button id="send-message">Submit</button>
 </form>
 
 <script>
+    (() => {
+        const urlParams = new URLSearchParams(window.location.search)
+        const reciever = urlParams.get('username')
+        const messagesList = document.getElementById('messages')
+        const sendMessageBtn = document.getElementById('send-message')
+
+        sendMessageBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            const message = document.getElementById('message-text').value
+
+            fetch('/sendChatMessage', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message, reciever })
+            }).then(response => {
+                console.log(response)
+            })
+        })
+
+        fetch('/getChatHistory?reciever=' + reciever, { method: 'GET' }).then(data => {
+            console.log(data)
+            return data.json()
+        }).then(messages => {
+            const listItems = messages.map(msg => `<li>${msg.text}</li>`)
+            messagesList.innerHTML = listItems
+
+        })
+
+    })()
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
