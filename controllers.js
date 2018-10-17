@@ -7,6 +7,7 @@ let maxid = -1
 const login = (req, res) => {
   const username = req.body.username
   var user = users.filter(u => u.username === username)[0]
+  console.log(user)
   if (user) {
     res.cookie('username', user)
     if (!authorized.map(u => u.username).includes(username)) authorized.push(user)
@@ -55,8 +56,9 @@ const register = (req, res) => {
   return res.redirect(`/userList?authorized=${authorizedQstr}`)
 }
 
-const sendChatMessage = (req, res) => {
-  console.log('start')
+const sendChatMessage = io => (req, res) => {
+  console.log('sendChatMessage ctrl io')
+  console.log(io)
   const reciever = req.body.reciever
   const recieverId = users.filter(u => u.username === reciever)[0].id
   const senderId = req.cookies.username.id
@@ -64,29 +66,26 @@ const sendChatMessage = (req, res) => {
   const chat = chatHistory[chatId]
 
   let maxMessageId = chat.messages[chat.messages.length - 1].id
-
-  chat.messages.push({
+  const newMessage = {
     id: ++maxMessageId,
     text: req.body.message,
     author: senderId
-  })
+  }
+  chat.messages.push(newMessage)
 
-  console.log('chat messages')
-  console.log(chat.messages)
-  console.log('finish')
+  io.emit('newMessage', newMessage)
 
   return res.send('ok')
 }
 
 const getChatHistory = (req, res) => {
   const reciever = req.query.reciever
+  console.log(req.cookies)
   const senderId = req.cookies.username.id
   const recieverId = users.filter(u => u.username === reciever)[0].id
   const chatId = [senderId, recieverId].sort((a, b) => a - b).join('')
   const chat = chatHistory[chatId]
 
-  console.log('chat')
-  console.log(chat)
   return res.json(chat.messages)
 }
 
